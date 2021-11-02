@@ -2,10 +2,12 @@ import discord
 import gigamememaker
 from discord.ext import commands
 import io
+import os
 
 #Init
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix = '=', intents = intents)
+TOKEN = os.environ.get('gigatoken')
 
 @bot.event
 async def on_ready():
