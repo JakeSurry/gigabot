@@ -26,9 +26,9 @@ async def commands(context):
     help_embed = discord.Embed(title='Commands:', color=0xffc021)
     giga = discord.File("giga/giga_0.jpeg", filename="giga.jpeg")
     help_embed.set_thumbnail(url='attachment://giga.jpeg')
-    help_embed.add_field(name='=commands', value="To see this list, do: =commands", inline=False)
-    help_embed.add_field(name='=giga', value="To send a meme of giga, do: =giga 'top text'//'bottom text'", inline=False)
-    help_embed.add_field(name='=custom', value="To send a custom meme, do: =custom 'url' 'top text'//'bottom text'", inline=False)
+    help_embed.add_field(name='=commands', value="Shows this list: =commands", inline=False)
+    help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga 'top text'//'bottom text'", inline=False)
+    help_embed.add_field(name='=custom', value="Sends a custom meme: =custom 'top text'//'bottom text' 'url OR attachment'", inline=False)
     await message.channel.send(file=giga, embed=help_embed)
 
 @bot.command(name = 'giga', pass_context = True)
@@ -54,8 +54,11 @@ async def custom(context):
     await context.message.delete()
     text = message.content.split(' ')
     text.pop(0)
-    url = text[0]
-    text.pop(0)
+    if len(message.attachments) > 0:
+        url = message.attachments[0].url
+    else:
+        url = text[-1]
+        text.pop(-1)
     text = ' '.join(text).upper()
     text = text.split('//')
     if len(text) < 2:
