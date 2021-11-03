@@ -1,28 +1,24 @@
-from PIL import Image, ImageFont, ImageDraw 
+from PIL import Image, ImageFont, ImageDraw, UnidentifiedImageError
 import random as rand
 import textwrap as tr
 import sys
 import io
+import requests
 
-class Gigamememaker():
-    def get_giga(self):
-        giga_num = rand.randint(0, 9)
-        source = f'giga/giga_{giga_num}.jpeg'
-        return source
+class Mememaker():
 
-    def make_meme(self, top_text, bottom_text, filename):
-        img = Image.open(filename)
+    def make_meme(self, top_text, bottom_text, img):
         image_size = img.size
 
         fontSize = int(image_size[1]/6)
-        font = ImageFont.truetype("impact.ttf", fontSize)
+        font = ImageFont.truetype("/Library/Fonts/Impact.ttf", fontSize)
         top_text_size = font.getsize(top_text)
         bottom_text_size = font.getsize(bottom_text)
 
         end = False
         while not end:
             fontSize = fontSize - 1
-            font = ImageFont.truetype("impact.ttf", fontSize)
+            font = ImageFont.truetype("/Library/Fonts/Impact.ttf", fontSize)
             top_text_size = font.getsize(top_text)
             bottom_text_size = font.getsize(bottom_text)
             if top_text_size[0] < image_size[0]-20 and bottom_text_size[0] < image_size[0]-20:
@@ -46,18 +42,39 @@ class Gigamememaker():
 
         return img
 
-    def main(self, top_text, bottom_text):
-        source = self.get_giga()
-        giga = self.make_meme(top_text, bottom_text, source)
-        return giga
+    def main(self, top_text, bottom_text, source):
+        meme = self.make_meme(top_text, bottom_text, source)
+        return meme
 
-def main(top_text, bottom_text):
-    giga = Gigamememaker()
-    giga = giga.main(top_text, bottom_text)
-    return giga
+def giga_meme(top_text, bottom_text):
+    giga_num = rand.randint(0, 9)
+    source = f'giga/giga_{giga_num}.jpeg'
+    img = Image.open(source)
+    mememaker = Mememaker()
+    meme = mememaker.main(top_text, bottom_text, img)
+    return meme
+
+def custom_meme(top_text, bottom_text, url):
+    try:
+        response = requests.get(url)
+        image_bytes = io.BytesIO(response.content)  
+        img = Image.open(image_bytes)  
+        mememaker  = Mememaker()
+        meme = mememaker.main(top_text, bottom_text, img)
+    except (requests.exceptions.ConnectionError, requests.exceptions.MissingSchema, UnidentifiedImageError) as e:
+        meme = 'URL_ERROR'
+    return meme
 
 if __name__ == '__main__':
     top_text = input('Top Text: ').upper()
     bottom_text = input('Bottom Text: ').upper()
-    giga = Gigamememaker()
-    giga.main(top_text, bottom_text)
+    url = input('URL: ')
+    try:
+        response = requests.get(url)
+        image_bytes = io.BytesIO(response.content)  
+        img = Image.open(image_bytes)  
+        mememaker  = Mememaker()
+        meme = mememaker.main(top_text, bottom_text, img)
+    except (requests.exceptions.ConnectionError, requests.exceptions.MissingSchema, UnidentifiedImageError) as e:
+        meme = 'URL_ERROR'
+    #meme.show()
