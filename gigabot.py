@@ -15,11 +15,9 @@ async def on_ready():
 
 @bot.event
 async def on_command_error(ctx, error):
-    await ctx.message.delete()
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        await ctx.message.delete()
         await ctx.send(f'{ctx.message.author.mention} **That is not a command.**')
-    if isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-        await ctx.send(f'{ctx.message.author.mention} **You did not fill all the required fields for that command.**')
 
 @bot.command(name = 'commands', pass_context = True)
 async def commands(context):
@@ -36,6 +34,7 @@ async def commands(context):
 @bot.command(name = 'giga', pass_context = True)
 async def giga(context):
     message = context.message
+    await context.message.delete()
     text = message.content.upper().split(' ')
     text.pop(0)
     text = ' '.join(text)
@@ -48,11 +47,11 @@ async def giga(context):
         meme.save(image_binary, 'JPEG')
         image_binary.seek(0)
         await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=image_binary, filename='giga.jpeg'))
-    await message.delete()
 
 @bot.command(name = 'custom', pass_context = True)
 async def custom(context):
     message = context.message
+    await context.message.delete()
     text = message.content.split(' ')
     text.pop(0)
     url = text[0]
@@ -69,7 +68,6 @@ async def custom(context):
         with io.BytesIO() as image_binary: 
             meme.save(image_binary, 'PNG')
             image_binary.seek(0)
-            await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=image_binary, filename='giga.jpeg'))
-    await message.delete()
+            await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=image_binary, filename='giga.png'))
 
 bot.run(TOKEN)
