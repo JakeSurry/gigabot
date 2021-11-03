@@ -11,14 +11,14 @@ class Mememaker():
         image_size = img.size
 
         fontSize = int(image_size[1]/6)
-        font = ImageFont.truetype("/Library/Fonts/Impact.ttf", fontSize)
+        font = ImageFont.truetype("impact.ttf", fontSize)
         top_text_size = font.getsize(top_text)
         bottom_text_size = font.getsize(bottom_text)
 
         end = False
         while not end:
             fontSize = fontSize - 1
-            font = ImageFont.truetype("/Library/Fonts/Impact.ttf", fontSize)
+            font = ImageFont.truetype("impact.ttf", fontSize)
             top_text_size = font.getsize(top_text)
             bottom_text_size = font.getsize(bottom_text)
             if top_text_size[0] < image_size[0]-20 and bottom_text_size[0] < image_size[0]-20:
