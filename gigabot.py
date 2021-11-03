@@ -28,7 +28,6 @@ async def giga(context):
     with io.BytesIO() as image_binary:
         giga.save(image_binary, 'JPEG')
         image_binary.seek(0)
-        await message.channel.send(file=discord.File(fp=image_binary, filename='giga.jpeg'))
-        await message.channel.send(f'**By: {message.author.mention}**')
+        await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=image_binary, filename='giga.jpeg'))
 
 bot.run(TOKEN)
