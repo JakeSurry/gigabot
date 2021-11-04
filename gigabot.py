@@ -13,11 +13,13 @@ TOKEN = os.environ.get('gigatoken')
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="'=commands'"))
 
+'''
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
         await ctx.message.delete()
         await ctx.send(f'{ctx.message.author.mention} **That is not a command.**')
+'''
 
 @bot.command(name = 'commands', pass_context = True)
 async def commands(context):
@@ -28,7 +30,7 @@ async def commands(context):
     help_embed.set_thumbnail(url='attachment://giga.jpeg')
     help_embed.add_field(name='=commands', value="Shows this list: =commands", inline=False)
     help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga 'top text'//'bottom text'", inline=False)
-    help_embed.add_field(name='=custom', value="Sends a custom meme: =custom 'top text'//'bottom text' 'url OR attachment'", inline=False)
+    help_embed.add_field(name='=custom', value="Sends a custom meme: =custom 'top text'//'bottom text' 'url' OR 'attachment'", inline=False)
     await message.channel.send(file=giga, embed=help_embed)
 
 @bot.command(name = 'giga', pass_context = True)
@@ -67,6 +69,8 @@ async def custom(context):
         meme = gigamememaker.custom_meme(text[0], text[1], url)
     if meme == 'URL_ERROR':
         await message.channel.send(f'{message.author.mention} **That is not a valid URL, or it does not contain an image.**')
+    elif meme == 'TOO_LARGE':
+        await message.channel.send(f'{message.author.mention} **That image is too large.**')
     else:
         with io.BytesIO() as image_binary: 
             meme.save(image_binary, 'PNG')

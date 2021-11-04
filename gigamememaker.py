@@ -40,27 +40,25 @@ class Mememaker():
         draw.text(topTextPosition, top_text, (255,255,255), font=font)
         draw.text(bottomTextPosition, bottom_text, (255,255,255), font=font)
 
+        if sys.getsizeof(img.tobytes()) > 10000000:
+            img = 'TOO_LARGE'
         return img
-
-    def main(self, top_text, bottom_text, source):
-        meme = self.make_meme(top_text, bottom_text, source)
-        return meme
 
 def giga_meme(top_text, bottom_text):
     giga_num = rand.randint(0, 9)
     source = f'giga/giga_{giga_num}.jpeg'
     img = Image.open(source)
     mememaker = Mememaker()
-    meme = mememaker.main(top_text, bottom_text, img)
+    meme = mememaker.make_meme(top_text, bottom_text, img)
     return meme
 
 def custom_meme(top_text, bottom_text, url):
     try:
         response = requests.get(url)
-        image_bytes = io.BytesIO(response.content)  
-        img = Image.open(image_bytes)  
+        img_bytes = io.BytesIO(response.content) 
+        img = Image.open(img_bytes)
         mememaker  = Mememaker()
-        meme = mememaker.main(top_text, bottom_text, img)
+        meme = mememaker.make_meme(top_text, bottom_text, img)
     except (requests.exceptions.ConnectionError, requests.exceptions.MissingSchema, UnidentifiedImageError) as e:
         meme = 'URL_ERROR'
     return meme
@@ -69,12 +67,5 @@ if __name__ == '__main__':
     top_text = input('Top Text: ').upper()
     bottom_text = input('Bottom Text: ').upper()
     url = input('URL: ')
-    try:
-        response = requests.get(url)
-        image_bytes = io.BytesIO(response.content)  
-        img = Image.open(image_bytes)  
-        mememaker  = Mememaker()
-        meme = mememaker.main(top_text, bottom_text, img)
-    except (requests.exceptions.ConnectionError, requests.exceptions.MissingSchema, UnidentifiedImageError) as e:
-        meme = 'URL_ERROR'
-    #meme.show()
+    meme = custom_meme(top_text, bottom_text, url)
+    meme.show()
