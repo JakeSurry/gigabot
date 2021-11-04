@@ -31,17 +31,17 @@ class Mememaker():
 
         draw = ImageDraw.Draw(img)
 
-        outlineRange = int(fontSize/15)
-        for x in range(-outlineRange, outlineRange+1):
-            for y in range(-outlineRange, outlineRange+1):
-                draw.text((topTextPosition[0]+x, topTextPosition[1]+y), top_text, (0,0,0), font=font)
-                draw.text((bottomTextPosition[0]+x, bottomTextPosition[1]+y), bottom_text, (0,0,0), font=font)
-
-        draw.text(topTextPosition, top_text, (255,255,255), font=font)
-        draw.text(bottomTextPosition, bottom_text, (255,255,255), font=font)
-
-        if sys.getsizeof(img.tobytes()) > 7500000:
+        if sys.getsizeof(img.tobytes()) > 7900000:
             img = 'TOO_LARGE'
+        else:
+            outlineRange = int(fontSize/15)
+            for x in range(-outlineRange, outlineRange+1):
+                for y in range(-outlineRange, outlineRange+1):
+                    draw.text((topTextPosition[0]+x, topTextPosition[1]+y), top_text, (0,0,0), font=font)
+                    draw.text((bottomTextPosition[0]+x, bottomTextPosition[1]+y), bottom_text, (0,0,0), font=font)
+
+            draw.text(topTextPosition, top_text, (255,255,255), font=font)
+            draw.text(bottomTextPosition, bottom_text, (255,255,255), font=font)
         return img
 
 def giga_meme(top_text, bottom_text):
