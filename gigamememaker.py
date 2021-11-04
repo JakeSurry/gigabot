@@ -40,7 +40,7 @@ class Mememaker():
         draw.text(topTextPosition, top_text, (255,255,255), font=font)
         draw.text(bottomTextPosition, bottom_text, (255,255,255), font=font)
 
-        if sys.getsizeof(img.tobytes()) > 10000000:
+        if sys.getsizeof(img.tobytes()) > 7500000:
             img = 'TOO_LARGE'
         return img
 
