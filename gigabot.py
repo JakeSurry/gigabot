@@ -4,7 +4,6 @@ from discord.ext import commands
 import io
 import os
 
-#Init
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix = '=', intents = intents)
 TOKEN = os.environ.get('gigatoken')
@@ -31,6 +30,7 @@ async def commands(context):
     help_embed.add_field(name='=commands', value="Shows this list: =commands", inline=False)
     help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga 'top text'//'bottom text'", inline=False)
     help_embed.add_field(name='=custom', value="Sends a custom meme: =custom 'top text'//'bottom text' 'url' OR 'attachment'", inline=False)
+    help_embed.add_field(name='=gif', value="Sends a custom meme: =gif 'top text'//'bottom text' 'url.gif' OR 'attachment'", inline=False)
     await message.channel.send(file=giga, embed=help_embed)
 
 @bot.command(name = 'giga', pass_context = True)
@@ -77,4 +77,30 @@ async def custom(context):
             image_binary.seek(0)
             await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=image_binary, filename='giga.png'))
 
+@bot.command(name = 'gif', pass_context = True)
+async def gif(context):
+    message = context.message
+    await context.message.delete()
+    text = message.content.split(' ')
+    text.pop(0)
+    if len(message.attachments) > 0:
+        url = message.attachments[0].url
+    else:
+        url = text[-1]
+        text.pop(-1)
+    text = ' '.join(text).upper()
+    text = text.split('//')
+    if len(text) < 2:
+        frames = gigamememaker.gif_meme(text[0], '', url)
+    else:
+        frames = gigamememaker.gif_meme(text[0], text[1], url)
+    if frames == 'URL_ERROR':
+        await message.channel.send(f'{message.author.mention} **That is not a valid URL, or it does not contain an image.**')
+    elif frames == 'TOO_LARGE':
+        await message.channel.send(f'{message.author.mention} **That image is too large.**')
+    else:
+        buffer = io.BytesIO()
+        frames[0].save(buffer, format='GIF', save_all=True, append_images=frames[1:])
+        buffer.seek(0)
+        await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=buffer, filename='giga.gif'))
 bot.run(TOKEN)
