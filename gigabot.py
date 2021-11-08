@@ -3,6 +3,8 @@ import gigamememaker
 from discord.ext import commands
 import io
 import os
+import sys
+import time
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix = '=', intents = intents)
@@ -14,12 +16,17 @@ async def on_ready():
 
 @bot.event
 async def on_command_error(ctx, error):
+    try:
+        await ctx.message.delete()
+    except discord.errors.NotFound:
+        pass
+
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        await ctx.message.delete()
         await ctx.send(f'{ctx.message.author.mention} **That is not a command.**')
-    if isinstance(error, discord.ext.commands.CommandOnCooldown):
-        await ctx.message.delete()
+    elif isinstance(error, discord.ext.commands.CommandOnCooldown):
         await ctx.send(ctx.message.author.mention+' **Please wait {:.1f} seconds before using that command again.**'.format(error.retry_after))
+    else:
+        await ctx.send(f'{ctx.message.author.mention} **Something went wrong with that command. Make sure you formatted it correctly.**')
 
 bot.remove_command('help')
 @bot.command(name = 'help', pass_context = True)
@@ -73,6 +80,7 @@ async def custom(context):
     else:
         meme = gigamememaker.custom_meme(text[0], text[1], url)
     if meme == 'URL_ERROR':
+        print('test')
         await message.channel.send(f'{message.author.mention} **That is not a valid URL, or it does not contain an image.**')
     elif meme == 'TOO_LARGE':
         await message.channel.send(f'{message.author.mention} **That image is too large.**')
@@ -100,6 +108,7 @@ async def gif(context):
         frames = gigamememaker.gif_meme(text[0], '', url)
     else:
         frames = gigamememaker.gif_meme(text[0], text[1], url)
+    start = time.time()
     if frames == 'URL_ERROR':
         await message.channel.send(f'{message.author.mention} **That is not a valid URL, or it does not contain an image.**')
     elif frames == 'TOO_LARGE':
@@ -108,6 +117,11 @@ async def gif(context):
         buffer = io.BytesIO()
         frames[0].save(buffer, format='GIF', save_all=True, append_images=frames[1:])
         buffer.seek(0)
-        await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=buffer, filename='giga.gif'))
+
+        if buffer.getbuffer().nbytes > 2000000:
+            await message.channel.send(f'{message.author.mention} **That image is too large.**')
+        else:
+            gif = discord.File(fp=buffer, filename='giga.gif')
+            await message.channel.send(f'**By: {message.author.mention}**', file=gif)
 
 bot.run(TOKEN)
