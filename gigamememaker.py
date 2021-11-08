@@ -6,6 +6,7 @@ import io
 import requests
 import warnings
 warnings.filterwarnings("error")
+warnings.simplefilter("ignore", UserWarning)
 
 class Mememaker():
     def get_text_size(self, top_text, bottom_text, img):
@@ -86,10 +87,10 @@ def gif_meme(top_text, bottom_text, url):
 
     except (requests.exceptions.ConnectionError, requests.exceptions.MissingSchema, UnidentifiedImageError) as e:
         frames = 'URL_ERROR'
-    except UserWarning:
-        pass
+
     return frames
 
+#THIS SECTION IS FOR TESTING MEMEMAKER INDUVIDUAllY
 if __name__ == '__main__':
     top_text = input('Top Text: ').upper()
     bottom_text = input('Bottom Text: ').upper()

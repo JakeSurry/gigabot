@@ -10,30 +10,33 @@ TOKEN = os.environ.get('gigatoken')
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="'=commands'"))
+    await bot.change_presence(activity=discord.Game(name="'=gigahelp'"))
 
-'''
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
         await ctx.message.delete()
         await ctx.send(f'{ctx.message.author.mention} **That is not a command.**')
-'''
+    if isinstance(error, discord.ext.commands.CommandOnCooldown):
+        await ctx.message.delete()
+        await ctx.send(ctx.message.author.mention+' **Please wait {:.0f} seconds before using that command again.**'.format(error.retry_after))
 
-@bot.command(name = 'commands', pass_context = True)
-async def commands(context):
+@bot.command(name = 'gigahelp', pass_context = True)
+@commands.cooldown(1, 1, discord.ext.commands.BucketType.user)
+async def gigahelp(context):
     message = context.message
     await context.message.delete()
     help_embed = discord.Embed(title='Commands:', color=0xffc021)
     giga = discord.File("giga/giga_0.jpeg", filename="giga.jpeg")
     help_embed.set_thumbnail(url='attachment://giga.jpeg')
-    help_embed.add_field(name='=commands', value="Shows this list: =commands", inline=False)
+    help_embed.add_field(name='=gigahelp', value="Shows this list: =gigahelp", inline=False)
     help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga 'top text'//'bottom text'", inline=False)
     help_embed.add_field(name='=custom', value="Sends a custom meme: =custom 'top text'//'bottom text' 'url' OR 'attachment'", inline=False)
     help_embed.add_field(name='=gif', value="Sends a custom meme: =gif 'top text'//'bottom text' 'url.gif' OR 'attachment'", inline=False)
     await message.channel.send(file=giga, embed=help_embed)
 
 @bot.command(name = 'giga', pass_context = True)
+@commands.cooldown(1, 2, commands.BucketType.user)
 async def giga(context):
     message = context.message
     await context.message.delete()
@@ -51,6 +54,7 @@ async def giga(context):
         await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=image_binary, filename='giga.jpeg'))
 
 @bot.command(name = 'custom', pass_context = True)
+@commands.cooldown(1, 2, commands.BucketType.user)
 async def custom(context):
     message = context.message
     await context.message.delete()
@@ -78,6 +82,7 @@ async def custom(context):
             await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=image_binary, filename='giga.png'))
 
 @bot.command(name = 'gif', pass_context = True)
+@commands.cooldown(1, 5, commands.BucketType.user)
 async def gif(context):
     message = context.message
     await context.message.delete()
@@ -103,4 +108,5 @@ async def gif(context):
         frames[0].save(buffer, format='GIF', save_all=True, append_images=frames[1:])
         buffer.seek(0)
         await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=buffer, filename='giga.gif'))
+
 bot.run(TOKEN)
