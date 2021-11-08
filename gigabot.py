@@ -10,7 +10,7 @@ TOKEN = os.environ.get('gigatoken')
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="'=gigahelp'"))
+    await bot.change_presence(activity=discord.Game(name="=help"))
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -19,17 +19,18 @@ async def on_command_error(ctx, error):
         await ctx.send(f'{ctx.message.author.mention} **That is not a command.**')
     if isinstance(error, discord.ext.commands.CommandOnCooldown):
         await ctx.message.delete()
-        await ctx.send(ctx.message.author.mention+' **Please wait {:.0f} seconds before using that command again.**'.format(error.retry_after))
+        await ctx.send(ctx.message.author.mention+' **Please wait {:.1f} seconds before using that command again.**'.format(error.retry_after))
 
-@bot.command(name = 'gigahelp', pass_context = True)
+bot.remove_command('help')
+@bot.command(name = 'help', pass_context = True)
 @commands.cooldown(1, 1, discord.ext.commands.BucketType.user)
-async def gigahelp(context):
+async def help(context):
     message = context.message
     await context.message.delete()
     help_embed = discord.Embed(title='Commands:', color=0xffc021)
     giga = discord.File("giga/giga_0.jpeg", filename="giga.jpeg")
     help_embed.set_thumbnail(url='attachment://giga.jpeg')
-    help_embed.add_field(name='=gigahelp', value="Shows this list: =gigahelp", inline=False)
+    help_embed.add_field(name='=help', value="Shows this list: =help", inline=False)
     help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga 'top text'//'bottom text'", inline=False)
     help_embed.add_field(name='=custom', value="Sends a custom meme: =custom 'top text'//'bottom text' 'url' OR 'attachment'", inline=False)
     help_embed.add_field(name='=gif', value="Sends a custom meme: =gif 'top text'//'bottom text' 'url.gif' OR 'attachment'", inline=False)
