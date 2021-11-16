@@ -38,7 +38,7 @@ class Mememaker():
 
         draw = ImageDraw.Draw(img)
 
-        if sys.getsizeof(img.tobytes()) > 1000000:
+        if sys.getsizeof(img.tobytes()) > 4000000:
             img = 'TOO_LARGE'
         else:
             draw.text(topTextPosition, top_text, font=font, color=(255, 255, 255), stroke_width=round(fontSize*.06), stroke_fill=(0, 0, 0))
@@ -66,32 +66,7 @@ def custom_meme(top_text, bottom_text, url):
         meme = 'URL_ERROR'
     return meme
 
-def gif_meme(top_text, bottom_text, url):
-    frames = []
-
-    try:
-        response = requests.get(url)
-        img_bytes = io.BytesIO(response.content) 
-        img = Image.open(img_bytes)
-
-        mememaker  = Mememaker()
-        font, top_text_size, bottom_text_size, image_size, fontSize = mememaker.get_text_size(top_text, bottom_text, img)
-        for frame in ImageSequence.Iterator(img):
-            img = frame.convert('RGB')
-            meme = mememaker.make_meme(top_text, bottom_text, img, font, top_text_size, bottom_text_size, image_size, fontSize)
-
-            frames.append(meme)
-
-            if meme == 'TOO_LARGE':
-                frames = 'TOO_LARGE'
-                break
-
-    except (requests.exceptions.ConnectionError, requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, UnidentifiedImageError) as e:
-        frames = 'URL_ERROR'
-
-    return frames
-
-#THIS SECTION IS FOR TESTING MEMEMAKER INDUVIDUAllY
+#THIS SECTION IS FOR TESTING MEMEMAKER INDIVIDUAllY
 if __name__ == '__main__':
     top_text = input('Top Text: ').upper()
     bottom_text = input('Bottom Text: ').upper()
