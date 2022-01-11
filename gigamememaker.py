@@ -55,13 +55,14 @@ def giga_meme(top_text, bottom_text):
 
 def custom_meme(top_text, bottom_text, url):
     try:
-        if int(requests.head(url).headers['Content-Length']) < 1500000:
+        if int(requests.head(url).headers['Content-Length']) < 2000000:
             response = requests.get(url)
             img_bytes = io.BytesIO(response.content) 
             img = Image.open(img_bytes)
             mememaker  = Mememaker()
             font, top_text_size, bottom_text_size, image_size, fontSize = mememaker.get_text_size(top_text, bottom_text, img)
             meme = mememaker.make_meme(top_text, bottom_text, img, font, top_text_size, bottom_text_size, image_size, fontSize)
+            meme = meme.convert('RGB')
         else:
             meme = 'TOO_LARGE'
     except (requests.exceptions.ConnectionError, requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, UnidentifiedImageError) as e:
@@ -72,7 +73,7 @@ def custom_meme(top_text, bottom_text, url):
 if __name__ == '__main__':
     top_text = input('Top Text: ').upper()
     bottom_text = input('Bottom Text: ').upper()
-    url = 'http://wallpaperevo.com/wp-content/uploads/2016/01/Ford-F-150-Raptor-SuperCrew-4K-UHD-Wallpaper.jpg'
+    url = 'https://cdn.discordapp.com/attachments/782476106108239882/930544399111319552/Screen_Shot_2022-01-11_at_2.26.23_PM.png'
     image = custom_meme(top_text, bottom_text, url)
     image.show()
     image.save('test.jpeg')
