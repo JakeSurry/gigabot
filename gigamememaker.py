@@ -69,11 +69,38 @@ def custom_meme(top_text, bottom_text, url):
         meme = 'URL_ERROR'
     return meme
 
+def gif_meme(top_text, bottom_text, url):
+    frames = []
+
+    try:
+
+        if int(requests.head(url).headers['Content-Length']) < 4000000:
+
+            response = requests.get(url)
+            img_bytes = io.BytesIO(response.content) 
+            img = Image.open(img_bytes)
+
+            mememaker = Mememaker()
+            font, top_text_size, bottom_text_size, image_size, fontSize = mememaker.get_text_size(top_text, bottom_text, img)
+            for frame in ImageSequence.Iterator(img):
+                img = frame.convert('RGB')
+                meme = mememaker.make_meme(top_text, bottom_text, img, font, top_text_size, bottom_text_size, image_size, fontSize)
+
+                frames.append(meme)
+
+        else:
+            frames = 'TOO_LARGE'
+
+    except (requests.exceptions.ConnectionError, requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, UnidentifiedImageError) as e:
+        frames = 'URL_ERROR'
+
+    return frames
+
 #THIS SECTION IS FOR TESTING MEMEMAKER INDIVIDUAllY
 if __name__ == '__main__':
     top_text = input('Top Text: ').upper()
     bottom_text = input('Bottom Text: ').upper()
-    url = 'https://cdn.discordapp.com/attachments/782476106108239882/930544399111319552/Screen_Shot_2022-01-11_at_2.26.23_PM.png'
-    image = custom_meme(top_text, bottom_text, url)
-    image.show()
-    image.save('test.jpeg')
+    url = ''
+    frames = gif_meme(top_text, bottom_text, url)
+    #image.show()
+    frames[0].save('giga.gif', format='GIF', save_all=True, append_images=frames[1:])
