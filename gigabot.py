@@ -19,6 +19,7 @@ async def on_ready():
 
 @bot.event
 async def on_command_error(ctx, error):
+    print(error)
     try:
         await ctx.message.delete()
     except discord.errors.NotFound:
@@ -87,8 +88,8 @@ async def custom(context):
         await message.channel.send(f'{message.author.mention} **That image is too large.**')
     else:
         with io.BytesIO() as image_binary: 
-            meme.save(image_binary, 'PNG')
+            meme.save(image_binary, 'JPEG')
             image_binary.seek(0)
-            await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=image_binary, filename='giga.png'))
+            await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=image_binary, filename='giga.jpeg'))
 
 bot.run(GIGATOKEN)
