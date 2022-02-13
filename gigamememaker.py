@@ -55,7 +55,7 @@ def giga_meme(top_text, bottom_text):
 
 def custom_meme(top_text, bottom_text, url):
     try:
-        if int(requests.head(url).headers['Content-Length']) < 2000000:
+        if int(requests.head(url).headers['Content-Length']) < 4000000:
             response = requests.get(url)
             img_bytes = io.BytesIO(response.content) 
             img = Image.open(img_bytes)
@@ -71,36 +71,27 @@ def custom_meme(top_text, bottom_text, url):
 
 def gif_meme(top_text, bottom_text, url):
     frames = []
-
     try:
-
-        if int(requests.head(url).headers['Content-Length']) < 4000000:
-
+        if int(requests.head(url).headers['Content-Length']) < 8000000:
             response = requests.get(url)
             img_bytes = io.BytesIO(response.content) 
             img = Image.open(img_bytes)
-
             mememaker = Mememaker()
             font, top_text_size, bottom_text_size, image_size, fontSize = mememaker.get_text_size(top_text, bottom_text, img)
             for frame in ImageSequence.Iterator(img):
-                img = frame.convert('RGB')
                 meme = mememaker.make_meme(top_text, bottom_text, img, font, top_text_size, bottom_text_size, image_size, fontSize)
-
                 frames.append(meme)
-
         else:
             frames = 'TOO_LARGE'
-
     except (requests.exceptions.ConnectionError, requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, UnidentifiedImageError) as e:
         frames = 'URL_ERROR'
-
     return frames
 
 #THIS SECTION IS FOR TESTING MEMEMAKER INDIVIDUAllY
 if __name__ == '__main__':
     top_text = input('Top Text: ').upper()
     bottom_text = input('Bottom Text: ').upper()
-    url = ''
+    url = 'https://c.tenor.com/8L1zf6GzDh0AAAAC/walter-white-walter.gif'
     frames = gif_meme(top_text, bottom_text, url)
     #image.show()
     frames[0].save('giga.gif', format='GIF', save_all=True, append_images=frames[1:])

@@ -44,6 +44,7 @@ async def help(context):
     help_embed.add_field(name='=help', value="Shows this list: =help", inline=False)
     help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga 'top text'//'bottom text'", inline=False)
     help_embed.add_field(name='=custom', value="Sends a custom meme: =custom 'top text'//'bottom text' 'url' OR 'attachment'", inline=False)
+    help_embed.add_field(name='=gif', value="Sends a custom meme: =gif 'top text'//'bottom text' 'url.gif' OR 'attachment'", inline=False)
     await message.channel.send(file=giga, embed=help_embed)
 
 @bot.command(name = 'giga', pass_context = True)
@@ -85,7 +86,7 @@ async def custom(context):
     if meme == 'URL_ERROR':
         await message.channel.send(f'{message.author.mention} **That is not a valid URL, or it does not contain an image.**')
     elif meme == 'TOO_LARGE':
-        await message.channel.send(f'{message.author.mention} **That image is too large.**')
+        await message.channel.send(f'{message.author.mention} **That image/gif is too large.**')
     else:
         with io.BytesIO() as buffer: 
             meme.save(buffer, 'JPEG')
