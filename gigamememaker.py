@@ -69,6 +69,16 @@ def custom_meme(top_text, bottom_text, url):
         meme = 'URL_ERROR'
     return meme
 
+def no_meme(top_text):
+    source = f'mega/no.jpeg'
+    img = Image.open(source)
+    mememaker = Mememaker()
+    top_text = 'NO '+top_text+'?'
+    bottom_text = ''
+    font, top_text_size, bottom_text_size, image_size, fontSize = mememaker.get_text_size(top_text, bottom_text, img)
+    meme = mememaker.make_meme(top_text, bottom_text, img, font, top_text_size, bottom_text_size, image_size, fontSize)
+    return meme
+
 def gif_meme(top_text, bottom_text, url):
     frames = []
     try:

@@ -42,9 +42,10 @@ async def help(context):
     giga = discord.File("giga/giga_0.jpeg", filename="giga.jpeg")
     help_embed.set_thumbnail(url='attachment://giga.jpeg')
     help_embed.add_field(name='=help', value="Shows this list: =help", inline=False)
-    help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga 'top text'//'bottom text'", inline=False)
-    help_embed.add_field(name='=custom', value="Sends a custom meme: =custom 'top text'//'bottom text' 'url' OR 'attachment'", inline=False)
-    help_embed.add_field(name='=gif', value="Sends a custom meme: =gif 'top text'//'bottom text' 'url.gif' OR 'attachment'", inline=False)
+    help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga top text//bottom text", inline=False)
+    help_embed.add_field(name='=no', value="Sends the Megamind meme: =no text", inline=False)
+    help_embed.add_field(name='=custom', value="Sends a custom meme: =custom top text//bottom text url OR attachmen'", inline=False)
+    help_embed.add_field(name='=gif', value="Sends a custom meme: =gif top text//bottom text url.gif OR attachment", inline=False)
     await message.channel.send(file=giga, embed=help_embed)
 
 @bot.command(name = 'giga', pass_context = True)
@@ -64,6 +65,20 @@ async def giga(context):
         meme.save(buffer, 'JPEG')
         buffer.seek(0)
         await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=buffer, filename='giga.jpeg'))
+
+@bot.command(name = 'no', pass_context = True)
+@commands.cooldown(1, 2, commands.BucketType.user)
+async def giga(context):
+    message = context.message
+    await context.message.delete()
+    text = message.content.upper().split(' ')
+    text.pop(0)
+    text = ' '.join(text)
+    meme = gigamememaker.no_meme(text)
+    with io.BytesIO() as buffer:
+        meme.save(buffer, 'JPEG')
+        buffer.seek(0)
+        await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=buffer, filename='no.jpeg'))
 
 @bot.command(name = 'custom', pass_context = True)
 @commands.cooldown(1, 2, commands.BucketType.user)
@@ -108,17 +123,17 @@ async def gif(context):
     text = ' '.join(text).upper()
     text = text.split('//')
     if len(text) < 2:
-        frames = gigamememaker.gif_meme(text[0], '', url)
+        meme = gigamememaker.gif_meme(text[0], '', url)
     else:
-        frames = gigamememaker.gif_meme(text[0], text[1], url)
+        meme = gigamememaker.gif_meme(text[0], text[1], url)
     start = time.time()
-    if frames == 'URL_ERROR':
+    if meme == 'URL_ERROR':
         await message.channel.send(f'{message.author.mention} **That is not a valid URL, or it does not contain an image.**')
-    elif frames == 'TOO_LARGE':
+    elif meme == 'TOO_LARGE':
         await message.channel.send(f'{message.author.mention} **That image is too large.**')
     else:
         with io.BytesIO() as buffer:
-            frames[0].save(buffer, format='GIF', save_all=True, append_images=frames[1:])
+            meme[0].save(buffer, format='GIF', save_all=True, append_images=meme[1:])
             buffer.seek(0)
             await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=buffer, filename='giga.gif'))
 
