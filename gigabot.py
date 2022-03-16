@@ -43,7 +43,7 @@ async def help(context):
     help_embed.set_thumbnail(url='attachment://giga.jpeg')
     help_embed.add_field(name='=help', value="Shows this list: =help", inline=False)
     help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga top text//bottom text", inline=False)
-    help_embed.add_field(name='=no', value="Sends the Megamind meme (The No and ? will be added automatically): =no text", inline=False)
+    help_embed.add_field(name='=no', value="Sends the Megamind meme (The '?' will be added automatically): =no text", inline=False)
     help_embed.add_field(name='=custom', value="Sends a custom meme: =custom top text//bottom text url OR attachmen'", inline=False)
     help_embed.add_field(name='=gif', value="Sends a custom meme: =gif top text//bottom text url.gif OR attachment", inline=False)
     await message.channel.send(file=giga, embed=help_embed)
