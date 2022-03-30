@@ -43,8 +43,8 @@ async def help(context):
     help_embed.set_thumbnail(url='attachment://giga.jpeg')
     help_embed.add_field(name='=help', value="Shows this list: =help", inline=False)
     help_embed.add_field(name='=giga', value="Sends a meme of giga: =giga top text//bottom text", inline=False)
-    help_embed.add_field(name='=no', value="Sends the Megamind meme (The '?' will be added automatically): =no text", inline=False)
-    help_embed.add_field(name='=custom', value="Sends a custom meme: =custom top text//bottom text url OR attachmen'", inline=False)
+    help_embed.add_field(name='=mega', value="Sends the Megamind meme (The '?' will be added automatically): =mega text", inline=False)
+    help_embed.add_field(name='=custom', value="Sends a custom meme: =custom top text//bottom text url OR attachment", inline=False)
     help_embed.add_field(name='=gif', value="Sends a custom meme: =gif top text//bottom text url.gif OR attachment", inline=False)
     await message.channel.send(file=giga, embed=help_embed)
 
@@ -66,7 +66,7 @@ async def giga(context):
         buffer.seek(0)
         await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=buffer, filename='giga.jpeg'))
 
-@bot.command(name = 'no', pass_context = True)
+@bot.command(name = 'mega', pass_context = True)
 @commands.cooldown(1, 2, commands.BucketType.user)
 async def giga(context):
     message = context.message
@@ -78,7 +78,7 @@ async def giga(context):
     with io.BytesIO() as buffer:
         meme.save(buffer, 'JPEG')
         buffer.seek(0)
-        await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=buffer, filename='no.jpeg'))
+        await message.channel.send(f'**By: {message.author.mention}**', file=discord.File(fp=buffer, filename='mega.jpeg'))
 
 @bot.command(name = 'custom', pass_context = True)
 @commands.cooldown(1, 2, commands.BucketType.user)
